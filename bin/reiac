@@ -7,6 +7,15 @@ if [ $# -eq 0 ]; then
 	exit 1
 fi
 
+if [ 0`readlink $0` = "0" ]; then
+  REALPATH=$0
+else
+  REALPATH=`readlink $0`
+fi
+APPPATH="${REALPATH%/*}"
+if [ "$APPPATH" = "." ]; then
+  APPPATH=`pwd`
+fi
 
 while getopts o: OPT; do
   case "$OPT" in
@@ -27,4 +36,4 @@ if [ "$OUTPUT_FILE" = "" ]; then
   OUTPUT_FILE=`echo $INPUT_FILE | sed s/re$/reb/`
 fi
 
-erl -pz ebin -pz ../ebin -noshell +K true -s reia_internal compile "$INPUT_FILE" "$OUTPUT_FILE" -s erlang halt -extra $*
+erl -pz "$APPPATH"/../ebin -noshell +K true -s reia_internal compile "$INPUT_FILE" "$OUTPUT_FILE" -s erlang halt -extra $*

@@ -1,3 +1,13 @@
 #!/bin/sh
 
-erl +K true -pz ebin -pz ../ebin -noshell -noinput -s ire init -extra $*
+if [ 0`readlink $0` = "0" ]; then
+  REALPATH=$0
+else
+  REALPATH=`readlink $0`
+fi
+APPPATH="${REALPATH%/*}"
+if [ "$APPPATH" = "." ]; then
+  APPPATH=`pwd`
+fi
+
+erl +K true -pz "$APPPATH"/../ebin -noshell -noinput -s ire init -extra $*

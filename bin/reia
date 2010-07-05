@@ -1,6 +1,16 @@
 #!/bin/sh
 
+if [ 0`readlink $0` = "0" ]; then
+  REALPATH=$0
+else
+  REALPATH=`readlink $0`
+fi
+APPPATH="${REALPATH%/*}"
+if [ "$APPPATH" = "." ]; then
+  APPPATH=`pwd`
+fi
+
 PROGRAM=$1
 shift
 
-erl -pz ebin -pz ../ebin -noshell +K true -s reia init -s reia_internal execute_file $PROGRAM -s init stop -extra $*
+erl -pz "$APPPATH"/../ebin -noshell +K true -s reia init -s reia_internal execute_file $PROGRAM -s init stop -extra $*
